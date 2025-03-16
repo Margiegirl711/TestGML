@@ -1,0 +1,30 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:p="http://pokeapi.com/pokemon"
+           targetNamespace="http://pokeapi.com/pokemon"
+           elementFormDefault="qualified">
+
+    <xs:element name="GetPokemonRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="limit" type="xs:int"/>
+                <xs:element name="offset" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="GetPokemonResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="pokemon" type="p:Pokemon" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="Pokemon">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="url" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>
