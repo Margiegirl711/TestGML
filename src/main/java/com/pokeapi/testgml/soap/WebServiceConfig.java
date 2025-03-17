@@ -1,4 +1,4 @@
-package com.pokeapi.testgml.service.configuration;
+package com.pokeapi.testgml.soap;
 
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;

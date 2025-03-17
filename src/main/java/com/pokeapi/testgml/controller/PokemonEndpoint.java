@@ -1,4 +1,4 @@
-package com.pokeapi.testgml.service.configuration;
+package com.pokeapi.testgml.controller;
 
 import java.util.List;
 import java.util.Map;
@@ -9,6 +9,9 @@ import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
+import com.pokeapi.testgml.modelSoap.GetPokemonRequest;
+import com.pokeapi.testgml.modelSoap.GetPokemonResponse;
+import com.pokeapi.testgml.modelSoap.Pokemon;
 import com.pokeapi.testgml.service.PokeApiService;
 
 

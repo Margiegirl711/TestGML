@@ -21,6 +21,9 @@ public class PokeApiService {
 	                .queryParam("limit", limit)
 	                .queryParam("offset", offset)
 	                .toUriString();
+	        
+	        System.out.println("Fetching from URL: " + url);
+	        
 	        return restTemplate.getForObject(url, Map.class);
 	    }
 

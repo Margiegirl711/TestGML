@@ -1,4 +1,4 @@
-package com.pokeapi.testgml.service.configuration;
+package com.pokeapi.testgml.modelSoap;
 
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;

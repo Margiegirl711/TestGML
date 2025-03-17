@@ -1,4 +1,4 @@
-package com.pokeapi.testgml.service.configuration;
+package com.pokeapi.testgml.modelSoap;
 
 import java.util.List;
 
