@@ -1,7 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:p="http://pokeapi.com/pokemon"
            targetNamespace="http://pokeapi.com/pokemon"
+           xmlns="http://pokeapi.com/pokemon"
            elementFormDefault="qualified">
+                     
+  <xs:element name="PokemonDetailsRequest">
+    <xs:complexType>
+        <xs:sequence>
+            <xs:element name="id" type="xs:int" minOccurs="0"/>
+            <xs:element name="name" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:element>
+    
+
+    <xs:element name="PokemonDetailsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:int"/>
+                <xs:element name="name" type="xs:string"/>
+                <xs:element name="height" type="xs:int"/>
+                <xs:element name="weight" type="xs:int"/>
+                <xs:element name="types" type="Type" maxOccurs="unbounded"/>
+                <xs:element name="abilities" type="Ability" maxOccurs="unbounded"/>
+                <xs:element name="moves" type="Move" maxOccurs="unbounded"/>
+                <xs:element name="evolutions" type="Evolution" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
 
     <xs:element name="GetPokemonRequest">
         <xs:complexType>
@@ -15,7 +41,25 @@
     <xs:element name="GetPokemonResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="pokemon" type="p:Pokemon" maxOccurs="unbounded"/>
+                <xs:element name="pokemons" type="Pokemon" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="PokemonSaveRequest">
+        <xs:complexType>
+            <xs:sequence>
+            <xs:element name="id" type="xs:int" minOccurs="0"/>
+            <xs:element name="name" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="PokemonSaveResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:int" minOccurs="1"/>
+                <xs:element name="message" type="xs:string" minOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -27,4 +71,37 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="Type">
+        <xs:sequence>
+            <xs:element name="id" type="xs:int"/>
+            <xs:element name="name" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Ability">
+        <xs:sequence>
+            <xs:element name="id" type="xs:int"/>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="description" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Move">
+        <xs:sequence>
+            <xs:element name="id" type="xs:int"/>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="power" type="xs:int" minOccurs="0"/>
+            <xs:element name="accuracy" type="xs:int" minOccurs="0"/>
+            <xs:element name="description" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Evolution">
+        <xs:sequence>
+            <xs:element name="basePokemonId" type="xs:int"/>
+            <xs:element name="evolvedPokemonId" type="xs:int"/>
+            <xs:element name="evolutionTrigger" type="xs:string"/>
+            <xs:element name="levelRequired" type="xs:int" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
 </xs:schema>
