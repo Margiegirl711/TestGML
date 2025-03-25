@@ -13,20 +13,23 @@ import com.pokeapi.testgml.modelSoap.Evolution;
 import com.pokeapi.testgml.modelSoap.Move;
 import com.pokeapi.testgml.modelSoap.PokemonDetailsResponse;
 import com.pokeapi.testgml.modelSoap.Type;
+import com.pokeapi.testgml.service.PokemonDataExtractor;
 import com.pokeapi.testgml.soap.PokemonApiClient;
 
 @Component
 public class PokemonDetailsMapper {
     private final PokemonApiClient pokemonApiClient;
+    private final PokemonDataExtractor pokemonDataExtractor;
 
-    public PokemonDetailsMapper(PokemonApiClient pokemonApiClient) {
+    public PokemonDetailsMapper(PokemonApiClient pokemonApiClient, PokemonDataExtractor pokemonDataExtractor) {
         this.pokemonApiClient = pokemonApiClient;
+        this.pokemonDataExtractor=pokemonDataExtractor;
     }
 
     public PokemonDetailsResponse mapToPokemonDetails(Map<String, Object> apiResponse) {
         int id = determinePokemonId(apiResponse);
         String name = (String) apiResponse.get("name");
-        String imageUrl = extractImageUrl(apiResponse);
+        String imageUrl = pokemonDataExtractor.extractImageUrl(apiResponse);
         int weight = (int) apiResponse.get("weight");
         
         List<Type> types = extractTypes(apiResponse);
@@ -57,16 +60,11 @@ public class PokemonDetailsMapper {
         List<Map<String, Object>> forms = (List<Map<String, Object>>) apiResponse.get("forms");
         if (forms != null && !forms.isEmpty()) {
             String url = (String) forms.get(0).get("url");
-            return extractPokemonIdFromUrl(url);
+            return pokemonDataExtractor.extractPokemonIdFromUrl(url);
         }
         return -1;
     }
 
-    private String extractImageUrl(Map<String, Object> apiResponse) {
-        return Optional.ofNullable((Map<String, String>) apiResponse.get("sprites"))
-                .map(sprites -> sprites.get("front_default"))
-                .orElse("No Image Available");
-    }
 
     private List<Type> extractTypes(Map<String, Object> apiResponse) {
         return Optional.ofNullable((List<Map<String, Object>>) apiResponse.get("types"))
@@ -74,7 +72,7 @@ public class PokemonDetailsMapper {
                 .stream()
                 .map(typeEntry -> {
                     Map<String, String> typeInfo = (Map<String, String>) typeEntry.get("type");
-                    int typeId = extractPokemonIdFromUrl(typeInfo.get("url"));
+                    int typeId = pokemonDataExtractor.extractPokemonIdFromUrl(typeInfo.get("url"));
                     return new Type(typeId, typeInfo.get("name"));
                 })
                 .toList();
@@ -89,7 +87,7 @@ public class PokemonDetailsMapper {
         List<Ability> abilities = new ArrayList<>();
         for (Map<String, Object> abilityEntry : abilitiesList) {
             Map<String, String> abilityInfo = (Map<String, String>) abilityEntry.get("ability");
-            int abilityId = extractPokemonIdFromUrl(abilityInfo.get("url"));
+            int abilityId = pokemonDataExtractor.extractPokemonIdFromUrl(abilityInfo.get("url"));
             String abilityName = abilityInfo.get("name");
             
             // Consultar la API para obtener la descripción en inglés
@@ -123,7 +121,7 @@ public class PokemonDetailsMapper {
         List<Move> moves = new ArrayList<>();
         for (Map<String, Object> moveEntry : movesList) {
             Map<String, String> moveInfo = (Map<String, String>) moveEntry.get("move");
-            int moveId = extractPokemonIdFromUrl(moveInfo.get("url"));
+            int moveId = pokemonDataExtractor.extractPokemonIdFromUrl(moveInfo.get("url"));
             String moveName = moveInfo.get("name");
             
             Map<String, Object> moveDetails = pokemonApiClient.fetchData(moveInfo.get("url"));
@@ -179,7 +177,7 @@ public class PokemonDetailsMapper {
             	System.out.println("️ La cadena de evolución está vacía o es nula.");
             }
 
-            int id = extractPokemonIdFromUrl((String) ((Map<String, Object>) chain.get("species")).get("url"));
+            int id = pokemonDataExtractor.extractPokemonIdFromUrl((String) ((Map<String, Object>) chain.get("species")).get("url"));
             String evolutionTrigger = "level-up";
             int levelRequired = 0;
 
@@ -211,13 +209,5 @@ public class PokemonDetailsMapper {
         }
     }
 
-    private int extractPokemonIdFromUrl(String url) {
-        try {
-            String[] parts = url.split("/");
-            return Integer.parseInt(parts[parts.length - 1]);
-        } catch (NumberFormatException e) {
-            System.err.println("Error extracting Pokemon ID from URL: " + url);
-            return -1;
-        }
-    }
+  
 }

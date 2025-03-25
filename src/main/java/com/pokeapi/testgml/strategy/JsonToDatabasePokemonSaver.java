@@ -15,6 +15,7 @@ import com.pokeapi.testgml.repository.PokemonMoveRepository;
 import com.pokeapi.testgml.repository.PokemonRepository;
 import com.pokeapi.testgml.repository.PokemonTypeRepository;
 import com.pokeapi.testgml.repository.TypeRepository;
+import com.pokeapi.testgml.service.PokemonDataExtractor;
 import com.pokeapi.testgml.soap.PokemonApiClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,13 +32,14 @@ public class JsonToDatabasePokemonSaver implements PokemonDataSaver {
     private final PokemonMoveRepository pokemonMoveRepository;
     private final PokemonEvolutionRepository pokemonEvolutionRepository;
     private final PokemonApiClient pokemonApiClient;
+    private final PokemonDataExtractor pokemonDataExtractor;
 
     public JsonToDatabasePokemonSaver(
             PokemonRepository pokemonRepository, TypeRepository typeRepository,
             PokemonTypeRepository pokemonTypeRepository, AbilityRepository abilityRepository,
             PokemonAbilityRepository pokemonAbilityRepository, MoveRepository moveRepository,
             PokemonMoveRepository pokemonMoveRepository, PokemonEvolutionRepository pokemonEvolutionRepository,
-            PokemonApiClient pokemonApiClient) {
+            PokemonApiClient pokemonApiClient, PokemonDataExtractor pokemonDataExtractor) {
         this.pokemonRepository = pokemonRepository;
         this.typeRepository = typeRepository;
         this.pokemonTypeRepository = pokemonTypeRepository;
@@ -47,6 +49,7 @@ public class JsonToDatabasePokemonSaver implements PokemonDataSaver {
         this.pokemonMoveRepository = pokemonMoveRepository;
         this.pokemonEvolutionRepository = pokemonEvolutionRepository;
         this.pokemonApiClient = pokemonApiClient;
+        this.pokemonDataExtractor= pokemonDataExtractor;
     }
 
     @Override
@@ -57,11 +60,11 @@ public class JsonToDatabasePokemonSaver implements PokemonDataSaver {
                 throw new IllegalArgumentException("La respuesta de la API es nula o vacía.");
             }
 
-            int id = extractInt(apiResponse, "id");
-            String name = extractString(apiResponse, "name");
-            int weight = extractInt(apiResponse, "weight");
-            String imageUrl = extractImageUrl(apiResponse);
-            int height = extractInt(apiResponse, "height");
+            int id = pokemonDataExtractor.extractInt(apiResponse, "id");
+            String name = pokemonDataExtractor.extractString(apiResponse, "name");
+            int weight = pokemonDataExtractor.extractInt(apiResponse, "weight");
+            String imageUrl = pokemonDataExtractor.extractImageUrl(apiResponse);
+            int height = pokemonDataExtractor.extractInt(apiResponse, "height");
 
             Pokemon pokemon = new Pokemon(id, name, height, weight, imageUrl, 0);
             pokemonRepository.save(pokemon);
@@ -77,23 +80,8 @@ public class JsonToDatabasePokemonSaver implements PokemonDataSaver {
         }
     }
 
-    private String extractImageUrl(Map<String, Object> apiResponse) {
-        return Optional.ofNullable((Map<String, String>) apiResponse.get("sprites"))
-                .map(sprites -> sprites.get("front_default"))
-                .orElse("No Image Available");
-    }
-
-	private int extractInt(Map<String, Object> data, String key) {
-        return data.containsKey(key) ? (int) data.get(key) : 0;
-    }
-
-    private String extractString(Map<String, Object> data, String key) {
-        return data.containsKey(key) ? (String) data.get(key) : "Desconocido";
-    }
 
 
-
- 
     private void saveTypes(Map<String, Object> apiResponse, Pokemon pokemon) {
         try {
             List<Map<String, Object>> types = (List<Map<String, Object>>) apiResponse.get("types");
@@ -166,11 +154,11 @@ public class JsonToDatabasePokemonSaver implements PokemonDataSaver {
 
 	                // Extraer datos con manejo seguro de valores nulos
 	                String moveName = moveInfo.getOrDefault("name", "Desconocido");
-	                int power = extractInt(moveData, "power");
-	                int accuracy = extractInt(moveData, "accuracy");
-	                int timesOfUse = extractInt(moveData, "pp");
-	                String damageArea = extractString(moveData, "damage_class", "name");
-	                String description = extractFlavorText(moveData);
+	                int power = pokemonDataExtractor.extractInt(moveData, "power");
+	                int accuracy = pokemonDataExtractor.extractInt(moveData, "accuracy");
+	                int timesOfUse = pokemonDataExtractor.extractInt(moveData, "pp");
+	                String damageArea = pokemonDataExtractor.extractString(moveData, "damage_class", "name");
+	                String description = pokemonDataExtractor.extractFlavorText(moveData);
 
 	                // Obtener el tipo del movimiento
 	                Type moveType = null;
@@ -198,22 +186,6 @@ public class JsonToDatabasePokemonSaver implements PokemonDataSaver {
 	  
 	        
 	}
-    
-    private String extractString(Map<String, Object> data, String key, String subKey) {
-        return (data != null && data.containsKey(key) && data.get(key) instanceof Map) 
-            ? ((Map<String, String>) data.get(key)).getOrDefault(subKey, "Desconocido") 
-            : "Desconocido";
-    }
 
-    private String extractFlavorText(Map<String, Object> moveData) {
-        if (moveData.containsKey("flavor_text_entries")) {
-            List<Map<String, Object>> entries = (List<Map<String, Object>>) moveData.get("flavor_text_entries");
-            for (Map<String, Object> entry : entries) {
-                if ("en".equals(((Map<String, String>) entry.get("language")).get("name"))) {
-                    return (String) entry.get("flavor_text");
-                }
-            }
-        }
-        return "Descripción no disponible";
-    }
+
 }
