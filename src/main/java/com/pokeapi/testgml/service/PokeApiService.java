@@ -15,7 +15,6 @@ import com.pokeapi.testgml.mapper.PokemonDetailsMapper;
 import com.pokeapi.testgml.modelSoap.PokemonDetailsResponse;
 import com.pokeapi.testgml.modelSoap.PokemonSaveRequest;
 import com.pokeapi.testgml.modelSoap.PokemonSaveResponse;
-import com.pokeapi.testgml.soap.PokemonApiClient;
 import com.pokeapi.testgml.strategy.PokemonDataSaver;
 
 @Service

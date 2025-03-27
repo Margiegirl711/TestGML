@@ -15,8 +15,9 @@ import com.pokeapi.testgml.repository.PokemonMoveRepository;
 import com.pokeapi.testgml.repository.PokemonRepository;
 import com.pokeapi.testgml.repository.PokemonTypeRepository;
 import com.pokeapi.testgml.repository.TypeRepository;
+import com.pokeapi.testgml.service.PokemonApiClient;
 import com.pokeapi.testgml.service.PokemonDataExtractor;
-import com.pokeapi.testgml.soap.PokemonApiClient;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.*;

@@ -13,8 +13,8 @@ import com.pokeapi.testgml.modelSoap.Evolution;
 import com.pokeapi.testgml.modelSoap.Move;
 import com.pokeapi.testgml.modelSoap.PokemonDetailsResponse;
 import com.pokeapi.testgml.modelSoap.Type;
+import com.pokeapi.testgml.service.PokemonApiClient;
 import com.pokeapi.testgml.service.PokemonDataExtractor;
-import com.pokeapi.testgml.soap.PokemonApiClient;
 
 @Component
 public class PokemonDetailsMapper {

@@ -9,6 +9,7 @@ import org.springframework.ws.transport.http.MessageDispatcherServlet;
 import org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition;
 import org.springframework.xml.xsd.SimpleXsdSchema;
 import org.springframework.xml.xsd.XsdSchema;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @EnableWs
 @Configuration
@@ -35,6 +36,11 @@ public class WebServiceConfig {
 	        wsdl11Definition.setTargetNamespace("http://pokeapi.com/pokemon");
 	        wsdl11Definition.setSchema(pokemonSchema);
 	        return wsdl11Definition;
+	    }
+	    
+	    @Bean
+	    public WebClient webClient() {
+	        return WebClient.builder().build();
 	    }
 
 }
