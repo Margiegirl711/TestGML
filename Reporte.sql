@@ -37,10 +37,11 @@ AND (ability_name = '&ability_name' OR '&ability_name' IS NULL)
 AND (move_name = '&move_name' OR '&move_name' IS NULL);
 
 
-MYSQL 
+--MYSQL 
 
 CREATE TABLE `Pokeapi`.pokemon_report (
-    id INT PRIMARY KEY,
+    report_id INT AUTO_INCREMENT PRIMARY KEY,  -- Nueva clave primaria autoincremental
+    pokemon_id INT NOT NULL,                   -- ID del Pokémon
     pokemon_name VARCHAR(255),
     height INT,
     weight INT,
@@ -51,19 +52,23 @@ CREATE TABLE `Pokeapi`.pokemon_report (
     move_power INT,
     move_damage_area VARCHAR(255),
     evolved_pokemon_id INT,
-    evolved_pokemon_name VARCHAR(255)
+    evolved_pokemon_name VARCHAR(255),
+    UNIQUE KEY (pokemon_id, type_name, ability_name, move_name) -- Evita duplicados
 );
+
+DROP PROCEDURE IF EXISTS `Pokeapi`.refresh_pokemon_report;
 
 CREATE PROCEDURE `Pokeapi`.refresh_pokemon_report()
 BEGIN
     DELETE FROM `Pokeapi`.pokemon_report;
-    
+    ALTER TABLE `Pokeapi`.pokemon_report AUTO_INCREMENT = 1;
+
     INSERT INTO `Pokeapi`.pokemon_report (
-        id, pokemon_name, height, weight, image_url, type_name, ability_name, 
+        pokemon_id, pokemon_name, height, weight, image_url, type_name, ability_name, 
         move_name, move_power, move_damage_area, evolved_pokemon_id, evolved_pokemon_name
     )
-    SELECT 
-        p.id, 
+    SELECT DISTINCT
+        p.id AS pokemon_id, 
         p.name AS pokemon_name, 
         p.height, 
         p.weight, 
@@ -77,7 +82,7 @@ BEGIN
         ep.name AS evolved_pokemon_name
     FROM `Pokeapi`.pokemon p
     LEFT JOIN pokemon_type pt ON p.id = pt.pokemon_id
-    LEFT JOIN type t ON pt.type_id = t.id
+    LEFT JOIN type t ON pt.type_name = t.name
     LEFT JOIN pokemon_ability pa ON p.id = pa.pokemon_id
     LEFT JOIN ability a ON pa.ability_id = a.id
     LEFT JOIN pokemon_move pm ON p.id = pm.pokemon_id

@@ -14,4 +14,6 @@ public interface IPokeApiService {
     PokemonDetailsResponse getPokemonDetailsByName(String name);
     
     PokemonSaveResponse savePokemonDetails(PokemonSaveRequest request);
+    
+    
 }

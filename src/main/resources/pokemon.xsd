@@ -104,4 +104,41 @@
             <xs:element name="levelRequired" type="xs:int" minOccurs="0"/>
         </xs:sequence>
     </xs:complexType>
+    
+    <xs:element name="PokemonReportRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="pokemonName" type="xs:string" minOccurs="0"/>
+                <xs:element name="typeName" type="xs:string" minOccurs="0"/>
+                <xs:element name="abilityName" type="xs:string" minOccurs="0"/>
+                <xs:element name="moveName" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+ <xs:element name="PokemonReportResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="pokemonReports" type="PokemonReport" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="PokemonReport">
+        <xs:sequence>
+            <xs:element name="id" type="xs:int"/>
+            <xs:element name="pokemonName" type="xs:string"/>
+            <xs:element name="height" type="xs:int"/>
+            <xs:element name="weight" type="xs:int"/>
+            <xs:element name="imageUrl" type="xs:string"/>
+            <xs:element name="typeName" type="xs:string"/>
+            <xs:element name="abilityName" type="xs:string"/>
+            <xs:element name="moveName" type="xs:string"/>
+            <xs:element name="movePower" type="xs:int"/>
+            <xs:element name="moveDamageArea" type="xs:string"/>
+            <xs:element name="evolvedPokemonId" type="xs:int" minOccurs="0"/>
+            <xs:element name="evolvedPokemonName" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
 </xs:schema>

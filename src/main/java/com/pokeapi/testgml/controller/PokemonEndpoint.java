@@ -11,24 +11,31 @@ import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
+
 import com.pokeapi.testgml.modelSoap.GetPokemonRequest;
 import com.pokeapi.testgml.modelSoap.GetPokemonResponse;
 import com.pokeapi.testgml.modelSoap.Pokemon;
 import com.pokeapi.testgml.modelSoap.PokemonDetailsRequest;
 import com.pokeapi.testgml.modelSoap.PokemonDetailsResponse;
+import com.pokeapi.testgml.modelSoap.PokemonReport;
+import com.pokeapi.testgml.modelSoap.PokemonReportRequest;
+import com.pokeapi.testgml.modelSoap.PokemonReportResponse;
 import com.pokeapi.testgml.modelSoap.PokemonSaveRequest;
 import com.pokeapi.testgml.modelSoap.PokemonSaveResponse;
 import com.pokeapi.testgml.service.IPokeApiService;
+import com.pokeapi.testgml.service.PokemonReportService;
 
 @Endpoint
 public class PokemonEndpoint {
     
     private static final String NAMESPACE_URI = "http://pokeapi.com/pokemon";
     private final IPokeApiService pokeApiService; 
+    private final PokemonReportService reportService;
 
     @Autowired
-    public PokemonEndpoint(IPokeApiService pokeApiService) {
+    public PokemonEndpoint(IPokeApiService pokeApiService, PokemonReportService reportService) {
         this.pokeApiService = pokeApiService;
+        this.reportService = reportService;
     }
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "GetPokemonRequest")
@@ -72,5 +79,24 @@ public class PokemonEndpoint {
     @ResponsePayload
     public PokemonSaveResponse savePokemon(@RequestPayload PokemonSaveRequest request) {
         return pokeApiService.savePokemonDetails(request);
+    }
+    
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "PokemonReportRequest")
+    @ResponsePayload
+    public PokemonReportResponse getPokemonReports(@RequestPayload PokemonReportRequest request) {
+    	try {
+            List<PokemonReport> reports = reportService.getPokemonReports(
+                request.getPokemonName(), 
+                request.getTypeName(), 
+                request.getAbilityName(), 
+                request.getMoveName()
+            );
+            PokemonReportResponse response = new PokemonReportResponse();
+            response.setPokemonReports(reports);
+            return response;
+        } catch (Exception e) {
+            e.printStackTrace(); 
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error processing SOAP request", e);
+        }
     }
 }
